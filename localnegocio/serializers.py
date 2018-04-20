@@ -5,4 +5,4 @@ from localnegocio.models import Localnegocio
 class LocalNegocioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Localnegocio
-        fields = ('idNegocio', 'latitud', 'longitud', 'descripcion')
+        fields = ('idnegocio', 'latitud', 'longitud', 'descripcion')
