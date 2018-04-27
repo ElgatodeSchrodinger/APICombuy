@@ -7,7 +7,7 @@ from localnegocio.serializers import LocalNegocioSerializer
 @api_view(['GET', 'POST'])
 def localnegocio_list(request):
     """
-    List all code snippets, or create a new snippet.
+    List all code Localnegocio, or create a new Localnegocio.
     """
     if request.method == 'GET':
         local = Localnegocio.objects.all()
@@ -24,7 +24,7 @@ def localnegocio_list(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def localnegocio_detail(request, pk):
     """
-    Retrieve, update or delete a code snippet.
+    Retrieve, update or delete a code Localnegocio.
     """
     try:
         localnegocio = Localnegocio.objects.get(pk=pk)

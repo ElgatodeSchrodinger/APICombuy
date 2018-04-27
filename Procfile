@@ -1,0 +1,1 @@
+web: gunicorn apicombuy.wsgi --log-file -
