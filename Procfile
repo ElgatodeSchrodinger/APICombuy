@@ -1,1 +1,1 @@
-web: gunicorn apicombuy.wsgi --log-file -
+web: gunicorn apicombuy.wsgi
