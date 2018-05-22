@@ -37,7 +37,7 @@ SECRET_KEY = '(pdn*l1)dw1%k@h)wgc+0=m^9p-@bh4$o$7igkpu^e)v5^cw)t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["us-cdbr-iron-east-04.cleardb.net"]
 
 
 # Application definition
