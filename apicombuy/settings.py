@@ -9,19 +9,20 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
 import os
-import django_heroku
+import sys
+from urllib.parse import urlparse
+##import django_heroku
 import pymysql
-import dj_database_url
+#import dj_database_url
 
-import psycopg2
+#import psycopg2
 
-DATABASE_URL = os.environ['DATABASE_URL']
+#DATABASE_URL = os.environ['DATABASE_URL']
 
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+#conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-#pymysql.install_as_MySQLdb()
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -87,17 +88,53 @@ WSGI_APPLICATION = 'apicombuy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-"""DATABASES = {
+
+# Register database schemes in URLs.
+#urlparse.uses_netloc.append('mysql')
+"""
+urlparse('mysql')
+
+try:
+
+    # Check to make sure DATABASES is set in settings.py file.
+    # If not default to {}
+
+    if 'DATABASES' not in locals():
+        DATABASES = {}
+
+    if 'DATABASE_URL' in os.environ:
+        url = urlparse.urlparse(os.environ['DATABASE_URL'])
+
+        # Ensure default database exists.
+        DATABASES['default'] = DATABASES.get('default', {})
+
+        # Update with environment configuration.
+        DATABASES['default'].update({
+            'NAME': url.path[1:],
+            'USER': url.username,
+            'PASSWORD': url.password,
+            'HOST': url.hostname,
+            'PORT': url.port,
+        })
+
+
+        if url.scheme == 'mysql':
+            DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+except Exception:
+    print ('Unexpected error:', sys.exc_info())
+
+"""
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'combuydb',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'NAME': 'heroku_c1dcf617225e524',
+        'USER': 'b56277fa38b0b8',
+        'PASSWORD': '44ceb5b4',
+        'HOST': 'us-cdbr-iron-east-04.cleardb.net',
         'PORT': 3306,
     }
-}"""
-DATABASES = { 'default': dj_database_url.config() }
+}
+#DATABASES = { 'default': dj_database_url.config() }
 
 
 # Password validation
@@ -146,4 +183,4 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-django_heroku.settings(locals())
+#django_heroku.settings(locals())

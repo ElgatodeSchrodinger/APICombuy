@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from localnegocio.models import Localnegocio
 from localnegocio.serializers import LocalNegocioSerializer
 
+
 @api_view(['GET', 'POST'])
 def localnegocio_list(request):
     """
