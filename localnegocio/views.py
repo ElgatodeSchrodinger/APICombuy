@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from localnegocio.models import Localnegocio
-from localnegocio.serializers import LocalNegocioSerializer
+from localnegocio.models import Localnegocio,Productolocal
+from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -46,3 +46,21 @@ def localnegocio_detail(request, pk):
     elif request.method == 'DELETE':
         localnegocio.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET', 'POST'])
+def localproductos_list(request):
+    """
+    List all code Productolocal, or create a new Productolocal.
+    """
+    if request.method == 'GET':
+        productos = Productolocal.objects.all()
+        serializer = ProductolocalSerializer(productos, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = ProductolocalSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
