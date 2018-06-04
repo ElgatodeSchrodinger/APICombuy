@@ -9,8 +9,8 @@ from django.db import models
 
 
 class Admnegocio(models.Model):
-    idnegocio = models.ForeignKey('Localnegocio', models.DO_NOTHING, db_column='idnegocio')
-    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idusuario')
+    idlocalnegocio = models.PositiveIntegerField()
+    idusuario = models.PositiveIntegerField()
 
     class Meta:
         managed = False
@@ -18,88 +18,95 @@ class Admnegocio(models.Model):
 
 
 class Cliente(models.Model):
-    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idusuario')
+    idusuario = models.PositiveIntegerField()
 
     class Meta:
         managed = False
         db_table = 'cliente'
 
 
+class Dia(models.Model):
+    iddia = models.CharField(primary_key=True, max_length=1)
+    nomdia = models.CharField(max_length=2)
+
+    class Meta:
+        managed = False
+        db_table = 'dia'
+
+
 class Disponibilidadprofesional(models.Model):
-    idnegocio = models.ForeignKey('Localnegocio', models.DO_NOTHING, db_column='idnegocio')
-    idprofesionales = models.ForeignKey('Profesionales', models.DO_NOTHING, db_column='idprofesionales')
-    dia = models.CharField(max_length=1)
-    horainicio = models.CharField(max_length=2, blank=True, null=True)
-    horafin = models.CharField(max_length=2, blank=True, null=True)
+    iddia = models.CharField(max_length=1)
+    horainicio = models.CharField(max_length=2)
+    horafin = models.CharField(max_length=2)
+    idprofesionales = models.PositiveIntegerField()
 
     class Meta:
         managed = False
         db_table = 'disponibilidadprofesional'
 
 
-class Empresa(models.Model):
-    nombreempresa = models.CharField(max_length=45)
-    ruc = models.CharField(max_length=11)
-    telefono = models.CharField(max_length=9)
-
-    class Meta:
-        managed = False
-        db_table = 'empresa'
-
-
 class Localnegocio(models.Model):
-    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, db_column='idempresa')
+    nombrenegocio = models.CharField(max_length=40)
+    ruc = models.CharField(max_length=10)
     latitud = models.FloatField()
     longitud = models.FloatField()
-    descripcion = models.CharField(max_length=80, blank=True, null=True)
+    descripcion = models.CharField(max_length=80)
     telefono = models.CharField(max_length=9)
-    hora_inicio = models.CharField(max_length=2)
-    hora_fin = models.CharField(max_length=2)
-    atencionestado = models.CharField(max_length=1)
+    hora_inicio = models.CharField(max_length=5)
+    hora_fin = models.CharField(max_length=5)
+    estado = models.CharField(max_length=1)
+    idtiponegocio = models.PositiveIntegerField()
 
     class Meta:
         managed = False
         db_table = 'localnegocio'
 
 
-class Menu(models.Model):
-    idnegocio = models.ForeignKey(Localnegocio, models.DO_NOTHING, db_column='idnegocio')
-    plato = models.CharField(max_length=45)
-    precio = models.CharField(max_length=45)
-    disponible = models.CharField(max_length=1)
+class Migrations(models.Model):
+    migration = models.CharField(max_length=191)
+    batch = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'menu'
+        db_table = 'migrations'
 
 
-class Pedidomenu(models.Model):
-    idcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='idcliente')
-    idmenu = models.ForeignKey(Menu, models.DO_NOTHING, db_column='idmenu')
-    cantidad = models.IntegerField()
+class PasswordResets(models.Model):
+    email = models.CharField(max_length=191)
+    token = models.CharField(max_length=191)
+    created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'pedidomenu'
+        db_table = 'password_resets'
 
 
 class Pedidoproducto(models.Model):
-    idcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='idcliente')
-    idproductolocal = models.ForeignKey('Productolocal', models.DO_NOTHING, db_column='idproductolocal')
     cantidad = models.IntegerField()
+    idcliente = models.PositiveIntegerField()
+    idprodnegocios = models.PositiveIntegerField()
 
     class Meta:
         managed = False
         db_table = 'pedidoproducto'
 
 
-class Productolocal(models.Model):
-    idnegocio = models.ForeignKey(Localnegocio, models.DO_NOTHING, db_column='idnegocio')
-    nomproducto = models.CharField(max_length=40)
+class Prodnegocios(models.Model):
+    idlocalnegocio = models.PositiveIntegerField()
+    idproductolocal = models.PositiveIntegerField()
     precio = models.DecimalField(max_digits=3, decimal_places=2)
     stock = models.IntegerField()
-    marca = models.CharField(max_length=40)
-    descripcion = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'prodnegocios'
+
+
+class Productolocal(models.Model):
+    nomproducto = models.CharField(max_length=40)
+    descripcion = models.CharField(max_length=200)
+    idtipolocalproducto = models.PositiveIntegerField()
+    idtipoproducto = models.PositiveIntegerField()
 
     class Meta:
         managed = False
@@ -108,33 +115,37 @@ class Productolocal(models.Model):
 
 class Profesionales(models.Model):
     nomprofesional = models.CharField(max_length=45)
+    correoprofesional = models.CharField(max_length=45)
+    telefonoprofesional = models.CharField(max_length=9)
+    idservicio = models.PositiveIntegerField()
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'profesionales'
 
 
-class Serviciolocal(models.Model):
+class Servicio(models.Model):
+    idservicio = models.AutoField(primary_key=True)
+    nomservico = models.CharField(max_length=45)
     precio = models.DecimalField(max_digits=4, decimal_places=2)
-    idnegocio = models.ForeignKey(Localnegocio, models.DO_NOTHING, db_column='idnegocio')
-    idtiposervicio = models.ForeignKey('Tiposervicio', models.DO_NOTHING, db_column='idtiposervicio')
+    idlocalnegocio = models.PositiveIntegerField()
 
     class Meta:
         managed = False
-        db_table = 'serviciolocal'
+        db_table = 'servicio'
 
 
-class Tipolocal(models.Model):
-    tiponegocio = models.ForeignKey('Tiponegocio', models.DO_NOTHING, db_column='tiponegocio')
-    idlocal = models.ForeignKey(Localnegocio, models.DO_NOTHING, db_column='idlocal')
+class Tipolocalproducto(models.Model):
+    nombre = models.CharField(max_length=15)
 
     class Meta:
         managed = False
-        db_table = 'tipolocal'
+        db_table = 'tipolocalproducto'
 
 
 class Tiponegocio(models.Model):
-    id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=45)
 
     class Meta:
@@ -142,22 +153,25 @@ class Tiponegocio(models.Model):
         db_table = 'tiponegocio'
 
 
-class Tiposervicio(models.Model):
-    nombretiposervicio = models.CharField(max_length=45)
+class Tipoproducto(models.Model):
+    nomtipo = models.CharField(max_length=191)
 
     class Meta:
         managed = False
-        db_table = 'tiposervicio'
+        db_table = 'tipoproducto'
 
 
-class Usuario(models.Model):
+class Users(models.Model):
+    name = models.CharField(max_length=45)
+    lastname = models.CharField(max_length=45)
+    dni = models.CharField(unique=True, max_length=9)
     username = models.CharField(max_length=45)
-    password = models.CharField(max_length=45)
-    nombre = models.CharField(max_length=45)
-    apellidos = models.CharField(max_length=45)
-    dni = models.CharField(max_length=9)
-    correo = models.CharField(max_length=45)
+    password = models.CharField(max_length=200)
+    email = models.CharField(unique=True, max_length=45)
+    remember_token = models.CharField(max_length=100, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'usuario'
+        db_table = 'users'

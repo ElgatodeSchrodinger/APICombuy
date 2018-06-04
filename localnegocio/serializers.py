@@ -4,7 +4,7 @@ from localnegocio.models import Localnegocio,Productolocal
 class ProductolocalSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Productolocal
-		fields = '__all__'
+		exclude = ("id",)
 		depth = 1
 
 
