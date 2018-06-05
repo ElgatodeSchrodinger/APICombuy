@@ -70,6 +70,7 @@ def localesporproductos_list(request,nomproducto):
     """
     List all code Productolocal, or create a new Productolocal.
     """
+    prodnegocios=[]
     try:
         producto = Productolocal.objects.get(nomproducto=nomproducto)
         prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id)
