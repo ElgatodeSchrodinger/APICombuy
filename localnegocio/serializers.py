@@ -14,6 +14,7 @@ class LocalNegocioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Localnegocio
         fields = '__all__'
+        
 """
     def create(self, validated_data):
         idLocalNegocio = validated_data.pop('')
