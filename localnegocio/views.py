@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from localnegocio.models import Localnegocio,Productolocal
+from localnegocio.models import Localnegocio,Productolocal,Prodnegocios
 from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSerializer
 
 
@@ -70,18 +70,13 @@ def localesporproductos_list(request,nomproducto):
     """
     List all code Productolocal, or create a new Productolocal.
     """
-    prodnegocios=[]
     try:
         producto = Productolocal.objects.get(nomproducto=nomproducto)
-        prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id)
+        prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id).values()
         negocios = []
         for i in prodnegocios:
-            negocios.append(Localnegocio.objects.get(id=i.idlocalnegocio))
+            negocios.append(Localnegocio.objects.get(id=i['idlocalnegocio_id']))
     except producto.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    except prodnegocios.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    except negocios.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     serializer = LocalNegocioSerializer(negocios, many=True)
     return Response(serializer.data)
