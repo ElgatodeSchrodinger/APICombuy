@@ -15,12 +15,8 @@ class LocalNegocioSerializer(serializers.ModelSerializer):
         model = Localnegocio
         fields = '__all__'
 
+
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        exclude = ("remember_token","created_at","updated_at")
-
-class ClienteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cliente
-        fields = '__all__'
+        fields = ('id','name','lastname','role','dni','username','password','email')

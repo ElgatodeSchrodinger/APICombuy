@@ -8,14 +8,6 @@
 from django.db import models
 
 
-class Administrador(models.Model):
-    idusuario = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='idusuario')
-
-    class Meta:
-        managed = False
-        db_table = 'administrador'
-
-
 class Admnegocio(models.Model):
     idlocalnegocio = models.ForeignKey('Localnegocio', on_delete=models.CASCADE, db_column='idlocalnegocio')
     idusuario = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='idusuario')
@@ -35,14 +27,14 @@ class Cliente(models.Model):
 
 class Localnegocio(models.Model):
     nombrenegocio = models.CharField(max_length=40)
-    ruc = models.CharField(max_length=10)
-    latitud = models.FloatField()
-    longitud = models.FloatField()
-    descripcion = models.CharField(max_length=80)
-    telefono = models.CharField(max_length=9)
-    hora_inicio = models.CharField(max_length=5)
-    hora_fin = models.CharField(max_length=5)
-    idtiponegocio = models.ForeignKey('Tiponegocio', on_delete=models.CASCADE, db_column='idtiponegocio')
+    ruc = models.CharField(max_length=10, blank=True, null=True)
+    latitud = models.CharField(max_length=191, blank=True, null=True)
+    longitud = models.CharField(max_length=191, blank=True, null=True)
+    descripcion = models.CharField(max_length=80, blank=True, null=True)
+    telefono = models.CharField(max_length=9, blank=True, null=True)
+    hora_inicio = models.CharField(max_length=5, blank=True, null=True)
+    hora_fin = models.CharField(max_length=5, blank=True, null=True)
+    idtiponegocio = models.ForeignKey('Tiponegocio', on_delete=models.CASCADE, db_column='idtiponegocio', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -94,22 +86,23 @@ class Productolocal(models.Model):
     descripcion = models.CharField(max_length=200)
     idtipolocalproducto = models.ForeignKey('Tipolocalproducto', on_delete=models.CASCADE, db_column='idtipolocalproducto')
     idtipoproducto = models.ForeignKey('Tipoproducto', on_delete=models.CASCADE, db_column='idtipoproducto')
-    etiqueta = models.CharField(max_length=200)
+    etiqueta = models.CharField(max_length=50)
 
     class Meta:
         managed = False
         db_table = 'productolocal'
 
 
-class Sugerencia(models.Model):
+class Sugerencias(models.Model):
     nomproducto = models.CharField(max_length=40)
     descripcion = models.CharField(max_length=200)
     idtipolocalproducto = models.ForeignKey('Tipolocalproducto', on_delete=models.CASCADE, db_column='idtipolocalproducto')
     idtipoproducto = models.ForeignKey('Tipoproducto', on_delete=models.CASCADE, db_column='idtipoproducto')
+    idlocalnegocio = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'sugerencia'
+        db_table = 'sugerencias'
 
 
 class Tipolocalproducto(models.Model):
@@ -139,6 +132,7 @@ class Tipoproducto(models.Model):
 class Users(models.Model):
     name = models.CharField(max_length=45)
     lastname = models.CharField(max_length=45)
+    role = models.CharField(max_length=10)
     dni = models.CharField(unique=True, max_length=9)
     username = models.CharField(max_length=45)
     password = models.CharField(max_length=200)
