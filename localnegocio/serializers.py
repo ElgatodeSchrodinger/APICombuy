@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from localnegocio.models import Localnegocio,Productolocal
+from localnegocio.models import Localnegocio,Productolocal, Users,Cliente
 
 class ProductolocalSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -13,4 +13,14 @@ class LocalNegocioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Localnegocio
+        fields = '__all__'
+
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        exclude = ("remember_token","created_at","updated_at")
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
         fields = '__all__'

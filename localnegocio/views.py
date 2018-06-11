@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from localnegocio.models import Localnegocio,Productolocal,Prodnegocios
-from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSerializer
+from localnegocio.models import Localnegocio,Productolocal,Prodnegocios,Users,Cliente
+from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSerializer,UsersSerializer,ClienteSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -68,7 +68,7 @@ def localproductos_list(request):
 @api_view(['GET'])
 def localesporproductos_list(request,nomproducto):
     """
-    List all code Productolocal, or create a new Productolocal.
+    List all code Locales por producto.
     """
     try:
         producto = Productolocal.objects.get(nomproducto=nomproducto)
@@ -78,5 +78,16 @@ def localesporproductos_list(request,nomproducto):
             negocios.append(Localnegocio.objects.get(id=i['idlocalnegocio_id']))
     except producto.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = LocalNegocioSerializer(negocios, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        serializer = LocalNegocioSerializer(negocios, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def login(request,username,password):
+    try:
+        usuario = Users.objects.get(username=username,password=password)
+    except cliente.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        serializer = UsersSerializer(usuario)
+        return Response(serializer.data)
