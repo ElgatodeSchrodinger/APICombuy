@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from localnegocio.models import Localnegocio,Productolocal, Users,Cliente
+from localnegocio.models import Localnegocio,Productolocal, Users,Cliente,Prodnegocios
 
 class ProductolocalSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -20,3 +20,9 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ('id','name','lastname','role','dni','username','password','email')
+
+class ProdnegocioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prodnegocios
+        exclude = ('id',)
+        depth = 1

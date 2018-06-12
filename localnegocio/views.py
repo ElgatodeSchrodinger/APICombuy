@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from localnegocio.models import Localnegocio,Productolocal,Prodnegocios,Users
-from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSerializer,UsersSerializer
+from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSerializer,UsersSerializer,ProdnegocioSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -70,8 +70,9 @@ def buscarproducto(request,nomproducto):
     """
     List all code Locales por producto.
     """
+    producto=Productolocal()
     try:
-        producto = Productolocal.objects.get(nomproducto=nomproducto)
+        producto = Productolocal.objects.get(nomproducto__icontains=nomproducto)
         prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id).values()
         negocios = []
         for i in prodnegocios:
@@ -136,3 +137,29 @@ def valid(request,username):
     except usuario.DoesNotExist:
         return Response({'message':'Nombre de usuario valido n.n'})
     return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def item(request,nomprod):
+    prodnegocios= Prodnegocios()
+    try:
+        producto = Productolocal.objects.get(nomproducto__icontains=nomprod)
+        prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id)
+    except prodnegocios.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except producto.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        serializer = ProdnegocioSerializer(prodnegocios, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def listitem(request):
+    prodnegocios= Prodnegocios()
+    try:
+        prodnegocios = Prodnegocios.objects.all()
+    except prodnegocios.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        serializer = ProdnegocioSerializer(prodnegocios, many=True)
+        return Response(serializer.data)

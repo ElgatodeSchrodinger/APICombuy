@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^user/register/$', views.register),
     url(r'^user/update/(?P<pk>[0-9]+)/$', views.login_update),
     url(r'^valid/(?P<username>\w+)/$', views.valid),
+    url(r'^item/(?P<nomprod>\w+)/$', views.item),
+    url(r'^listitem/$', views.listitem),
 ]
