@@ -68,15 +68,17 @@ def productos_list(request):
 @api_view(['GET'])
 def buscarproducto(request,nomproducto):
     """
-    List all code Locales por producto.
+    Busca Locales por producto.
     """
-    producto=Productolocal()
     try:
-        producto = Productolocal.objects.get(nomproducto__icontains=nomproducto)
-        prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id).values()
+        producto = Productolocal.objects.filter(nomproducto__icontains=nomproducto) | Productolocal.objects.filter(etiqueta__icontains=nomproducto)
         negocios = []
-        for i in prodnegocios:
-            negocios.append(Localnegocio.objects.get(id=i['idlocalnegocio_id']))
+        for n in producto:
+            prodnegocios = Prodnegocios.objects.filter(idproductolocal=n.id)
+            for i in prodnegocios:
+                negocios.append(Localnegocio.objects.get(id=i.id))
+        if not bool(negocios):
+            return Response(status=status.HTTP_404_NOT_FOUND)
     except producto.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
@@ -141,16 +143,21 @@ def valid(request,username):
 
 @api_view(['GET'])
 def item(request,nomprod):
-    prodnegocios= Prodnegocios()
+    producto=Productolocal()
+    items=[]
     try:
-        producto = Productolocal.objects.get(nomproducto__icontains=nomprod)
-        prodnegocios = Prodnegocios.objects.filter(idproductolocal=producto.id)
-    except prodnegocios.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    except producto.DoesNotExist:
+        producto = Productolocal.objects.filter(nomproducto__icontains=nomprod) | Productolocal.objects.filter(etiqueta__icontains=nomprod)
+        for n in producto:
+            try:
+                items.append(Prodnegocios.objects.get(idproductolocal=n.id))
+            except Prodnegocios.DoesNotExist:
+                pass
+        if not bool(items):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    except Productolocal.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
-        serializer = ProdnegocioSerializer(prodnegocios, many=True)
+        serializer = ProdnegocioSerializer(items, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
