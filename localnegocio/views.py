@@ -148,10 +148,9 @@ def item(request,nomprod):
     try:
         producto = Productolocal.objects.filter(nomproducto__icontains=nomprod) | Productolocal.objects.filter(etiqueta__icontains=nomprod)
         for n in producto:
-            try:
-                items.append(Prodnegocios.objects.get(idproductolocal=n.id))
-            except Prodnegocios.DoesNotExist:
-                pass
+            negocios = Prodnegocios.objects.filter(idproductolocal=n.id)
+            for x in negocios:
+                items.append(x)
         if not bool(items):
             return Response(status=status.HTTP_404_NOT_FOUND)
     except Productolocal.DoesNotExist:
