@@ -6,21 +6,19 @@ from localnegocio.serializers import LocalNegocioSerializer,ProductolocalSeriali
 
 
 @api_view(['GET', 'POST'])
-def localnegocio_list(request):
+def localnegocio_list(request,consulta):
     """
     List all code Localnegocio, or create a new Localnegocio.
     """
-    if request.method == 'GET':
-        local = Localnegocio.objects.all()
-        serializer = LocalNegocioSerializer(local, many=True)
+    result=[]
+    locales = Localnegocio.objects.filter(nombrenegocio__icontains=consulta)
+    for i in locales:
+        result.append(i)
+    serializer = LocalNegocioSerializer(result, many=True)
+    if bool(result):
         return Response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = LocalNegocioSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def localnegocio_detail(request, pk):
