@@ -20,31 +20,19 @@ def localnegocio_list(request,consulta):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def localnegocio_detail(request, pk):
+@api_view(['GET'])
+def localnegocio_detail(request):
     """
     Retrieve, update or delete a code Localnegocio.
     """
     try:
-        localnegocio = Localnegocio.objects.get(pk=pk)
+        localnegocio = Localnegocio.objects.all()
     except localnegocio.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = LocalNegocioSerializer(localnegocio)
+        serializer = LocalNegocioSerializer(localnegocio,many=True)
         return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = LocalNegocioSerializer(localnegocio, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        localnegocio.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 @api_view(['GET', 'POST'])
 def productos_list(request):
